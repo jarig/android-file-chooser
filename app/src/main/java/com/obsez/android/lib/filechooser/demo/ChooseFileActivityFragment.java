@@ -26,6 +26,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     private TextView _tv;
     private ImageView _iv;
 
+    private final static int READ_PERMS_REQUEST = 0;
+
     public ChooseFileActivityFragment() {
     }
 
@@ -42,79 +44,87 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             public void onClick(View v) {
                 // choose a folder
                 final Context ctx = getActivity();
-                new ChooserDialog().with(ctx)
-                        .withIcon(R.mipmap.ic_hedzr_logo)
-                        .withFilter(true, false)
-                        .withStartFile(_path)
-                        .withDateFormat("HH:mm")
-                        .withResources(R.string.title_choose_folder, R.string.title_choose,
-                                R.string.dialog_cancel)
-                        //.withOnCancelListener(new DialogInterface.OnCancelListener(){
-                        //
-                        //    /**
-                        //     * This method will be invoked when the dialog is canceled.
-                        //     *
-                        //     * @param dialog the dialog that was canceled will be passed into the
-                        //     *               method
-                        //     */
-                        //    @Override
-                        //    public void onCancel(DialogInterface dialog) {
-                        //        Log.d("CANCEL", "CANCEL");
-                        //    }
-                        //})
-                        //.withNegativeButtonListener(new DialogInterface.OnClickListener(){
-                        //
-                        //    /**
-                        //     * This method will be invoked when a button in the dialog is clicked.
-                        //     *
-                        //     * @param dialog the dialog that received the click
-                        //     * @param which  the button that was clicked (ex.
-                        //     *               {@link DialogInterface#BUTTON_POSITIVE}) or the position
-                        //     */
-                        //    @Override
-                        //    public void onClick(DialogInterface dialog, int which) {
-                        //        Log.d("Negative", "Negative");
-                        //    }
-                        //})
-                        .withChosenListener(new ChooserDialog.Result() {
-                            @Override
-                            public void onChoosePath(String path, File pathFile) {
-                                Toast.makeText(ctx, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
-                                _path = path;
-                                _tv.setText(_path);
-                            }
-                        })
-                        .build()
-                        .show();
+                try {
+                    new ChooserDialog().with(ctx)
+                            .withIcon(R.mipmap.ic_hedzr_logo)
+                            .withFilter(true, false)
+                            .withStartFile(_path)
+                            .withDateFormat("HH:mm")
+                            .withResources(R.string.title_choose_folder, R.string.title_choose,
+                                    R.string.dialog_cancel)
+                            //.withOnCancelListener(new DialogInterface.OnCancelListener(){
+                            //
+                            //    /**
+                            //     * This method will be invoked when the dialog is canceled.
+                            //     *
+                            //     * @param dialog the dialog that was canceled will be passed into the
+                            //     *               method
+                            //     */
+                            //    @Override
+                            //    public void onCancel(DialogInterface dialog) {
+                            //        Log.d("CANCEL", "CANCEL");
+                            //    }
+                            //})
+                            //.withNegativeButtonListener(new DialogInterface.OnClickListener(){
+                            //
+                            //    /**
+                            //     * This method will be invoked when a button in the dialog is clicked.
+                            //     *
+                            //     * @param dialog the dialog that received the click
+                            //     * @param which  the button that was clicked (ex.
+                            //     *               {@link DialogInterface#BUTTON_POSITIVE}) or the position
+                            //     */
+                            //    @Override
+                            //    public void onClick(DialogInterface dialog, int which) {
+                            //        Log.d("Negative", "Negative");
+                            //    }
+                            //})
+                            .withChosenListener(new ChooserDialog.Result() {
+                                @Override
+                                public void onChoosePath(String path, File pathFile) {
+                                    Toast.makeText(ctx, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                                    _path = path;
+                                    _tv.setText(_path);
+                                }
+                            })
+                            .build()
+                            .show(READ_PERMS_REQUEST);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         });
         root.findViewById(R.id.btn_choose_any_file).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Context ctx = getActivity();
-                new ChooserDialog(ctx)
-                        .withStartFile(_path)
-                        .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
-                        .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
-                        .withAdapterSetter(new ChooserDialog.AdapterSetter() {
-                            @Override
-                            public void apply(DirAdapter adapter) {
-                                //
-                            }
-                        })
-                        .withChosenListener(new ChooserDialog.Result() {
-                            @Override
-                            public void onChoosePath(String path, File pathFile) {
-                                Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                try {
+                    new ChooserDialog(ctx)
+                            .withStartFile(_path)
+                            .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
+                            .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
+                            .withAdapterSetter(new ChooserDialog.AdapterSetter() {
+                                @Override
+                                public void apply(DirAdapter adapter) {
+                                    //
+                                }
+                            })
+                            .withChosenListener(new ChooserDialog.Result() {
+                                @Override
+                                public void onChoosePath(String path, File pathFile) {
+                                    Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
 
-                                _path = path;
-                                _tv.setText(_path);
-                                //_iv.setImageURI(Uri.fromFile(pathFile));
-                                _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
-                            }
-                        })
-                        .build()
-                        .show();
+                                    _path = path;
+                                    _tv.setText(_path);
+                                    //_iv.setImageURI(Uri.fromFile(pathFile));
+                                    _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                                }
+                            })
+                            .build()
+                            .show(READ_PERMS_REQUEST);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         });
         return root;
@@ -124,35 +134,39 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     public void onClick(View v) {
         //choose a file
         final Context ctx = this.getActivity();
-        new ChooserDialog(ctx)
-                .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
-                .withStartFile(_path)
-                .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
-                .withChosenListener(new ChooserDialog.Result() {
-                    @Override
-                    public void onChoosePath(String path, File pathFile) {
-                        Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+        try {
+            new ChooserDialog(ctx)
+                    .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
+                    .withStartFile(_path)
+                    .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
+                    .withChosenListener(new ChooserDialog.Result() {
+                        @Override
+                        public void onChoosePath(String path, File pathFile) {
+                            Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
 
-                        _path = path;
-                        _tv.setText(_path);
-                        //_iv.setImageURI(Uri.fromFile(pathFile));
-                        _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
-                    }
-                })
-                .withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
-                    @Override
-                    public boolean canUpTo(File dir) {
-                        return true;
-                    }
-                })
-                .withNavigateTo(new ChooserDialog.CanNavigateTo() {
-                    @Override
-                    public boolean canNavigate(File dir) {
-                        return true;
-                    }
-                })
-                .build()
-                .show();
+                            _path = path;
+                            _tv.setText(_path);
+                            //_iv.setImageURI(Uri.fromFile(pathFile));
+                            _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                        }
+                    })
+                    .withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
+                        @Override
+                        public boolean canUpTo(File dir) {
+                            return true;
+                        }
+                    })
+                    .withNavigateTo(new ChooserDialog.CanNavigateTo() {
+                        @Override
+                        public boolean canNavigate(File dir) {
+                            return true;
+                        }
+                    })
+                    .build()
+                    .show(READ_PERMS_REQUEST);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
 }
